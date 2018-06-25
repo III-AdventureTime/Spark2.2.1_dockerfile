@@ -1,4 +1,4 @@
-# RDD Commands
+#  RDD Commands
 
 ## RDD
 
@@ -134,10 +134,44 @@ sc.parallelize([1,3,4,5,3,1,2,1,2,3,4]).countByValue().items()
 
 #### reduct(), aggregation()
 
-redoces the elements of this RDD using the specified commutative and associative binary operator. Currently reduces partitions locally.
+reduct(): redoces the elements of this RDD using the specified commutative and associative binary operator. Currently reduces partitions locally.
+
+aggregation(): Aggregate the elements of each partition, and then the results for all the partitions, using a given combine functions and a neutral "zero value". 
 
 ```python
 sc.parallelize([1,2,3,4,5]).reduce(lambda x,y : x + y)
 > 15
+
+numbers = sc.parallelize([1,2,3,4,5,8])
+result = numbers.aggregate(0, lambda acc,v:acc+u, lambda acc1,acc2:acc1+acc2)
+
+numbers = sc.parallelize([1,2,3,4,5,8])
+temp = numbers.aggregate( (0,0), lambda acc,v:(acc[0]+v, acc[1]+1), lambda acc1,acc2:(acc1[0]+acc2[0],acc1[1]+acc2[1]) )
+```
+
+
+
+#### foreach()
+Applies a function to all elements of this RDD.
+
+```python
+sc.parallelize([1,2,3,4,5]).foreach(lambda x:print(x))
+```
+
+
+
+
+
+### Key-Value RDD Actions
+- #### Working on data in key-value pairs
+
+
+
+#### keys()
+
+Return an RDD with the keys of each tuple.
+
+```
+sc.parallelize([(1,2),(3,4)]).keys().collect()
 ```
 

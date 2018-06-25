@@ -20,27 +20,26 @@ RUN apt-get -y -q update \
  && apt-get install -y vim nano python3 ipython3 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
- && rm -rf /tmp/* 
+ && rm -rf /tmp/* \
+ && wget -qO - ${scalaURL} | tar -xz -C /usr/local/ \
+ && wget -qO - ${sparkURL} | tar -xz -C /usr/local/ \
+ && cd /usr/local/ \
+ && ln -s scala-${scalaVersion} scala \
+ && ln -s spark-${sparkVersion}-bin-hadoop2.7 spark
 
-ADD ${scalaURL} /usr/local/
-#ADD ${sparkURL} /usr/local/ 
-
-#RUN cd /usr/local/ \
-# && ln -s scala-${scalaVersion} scala \
-# && ln -s spark-${sparkVersion}-bin-hadoop2.7 spark
-
-# Setup the python version of pyspark
-#RUN touch /root/.bashrc \
-# && echo "export PYSPARK_PYTHON=python3"  >> /root/.bashrc \
-# && echo "export PYSPARK_DRIVER_PYTHON=ipython3" >> /root/.bashrc \
-# && alias ll="ls -al" >> /root/.bashrc
-# && echo "export PYSPARK_DRIVER_PYTHON_OPTS='notebook'" >> /root/.bashrc \
+RUN touch /root/.bashrc \
+ && echo "export PYSPARK_PYTHON=python3"  >> /root/.bashrc \
+ && echo "export PYSPARK_DRIVER_PYTHON=ipython3" >> /root/.bashrc \
+ && echo 'alias ll="ls -alh"' >> /root/.bashrc \
+ && mkdir /root/data
+ 
+ # Setup the python version of pyspark
 
 # Logging as root.
-#USER root
+USER root
 
 # Working diretory is at /root
-#WORKDIR /root
+WORKDIR /root/data
 
 # Expose Spark port.
 # SparkContext web UI on 4040, Spark master’s web UI on 8080, Spark worker web UI on 8081.
